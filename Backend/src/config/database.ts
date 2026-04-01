@@ -1,11 +1,13 @@
+// backend/src/config/database.ts
 import mongoose from 'mongoose';
 
 export const connectDB = async (): Promise<void> => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/feedpulse');
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/feedpulse';
+    await mongoose.connect(mongoURI);
+    console.log('MongoDB connected successfully');
   } catch (error) {
-    console.error('Database connection error:', error);
+    console.error('MongoDB connection error:', error);
     process.exit(1);
   }
 };
