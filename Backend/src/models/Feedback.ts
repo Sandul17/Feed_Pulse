@@ -1,0 +1,37 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface IFeedback extends Document {
+  title: string;
+  description: string;
+  category: 'Bug' | 'Feature Request' | 'Improvement' | 'Other';
+  status: 'New' | 'In Review' | 'Planned' | 'In Progress' | 'Resolved' | 'Closed';
+  submitterName?: string;
+  submitterEmail?: string;
+  ai_category?: string;
+  ai_sentiment?: 'Positive' | 'Negative' | 'Neutral';
+  ai_priority?: number;
+  ai_summary?: string;
+  ai_tags?: string[];
+  ai_processed: boolean;
+}
+
+const FeedbackSchema: Schema = new Schema({
+  title: { type: String, required: true, trim: true },
+  description: { type: String, required: true, minlength: 10 },
+  category: { type: String, enum: ['Bug', 'Feature Request', 'Improvement', 'Other'], required: true },
+  status: { type: String, enum: ['New', 'In Review', 'Planned', 'In Progress', 'Resolved', 'Closed'], default: 'New' },
+  submitterName: { type: String, trim: true },
+  submitterEmail: { type: String, trim: true },
+  ai_category: String,
+  ai_sentiment: { type: String, enum: ['Positive', 'Negative', 'Neutral'] },
+  ai_priority: { type: Number, min: 1, max: 10 },
+  ai_summary: String,
+  ai_tags: [String],
+  ai_processed: { type: Boolean, default: false }
+}, { timestamps: true });
+
+// Index for performance
+FeedbackSchema.index({ status: 1, createdAt: -1 });
+FeedbackSchema.index({ ai_priority: -1 });
+
+export default mongoose.model<IFeedback>('Feedback', FeedbackSchema);
