@@ -2,19 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import Feedback from '../models/Feedback';
 import { body, validationResult } from 'express-validator';
-
-// Placeholder for AI service - we'll implement this on Day 4
-const processFeedbackWithAI = async (feedback: any) => {
-  console.log(`[AI Placeholder] Processing feedback ID: ${feedback._id}`);
-  // Simulate AI processing
-  feedback.ai_category = 'Pending AI';
-  feedback.ai_sentiment = 'Neutral';
-  feedback.ai_priority = 5;
-  feedback.ai_summary = 'Awaiting AI analysis.';
-  feedback.ai_tags = [];
-  feedback.ai_processed = true;
-  return feedback.save();
-};
+import { processFeedbackWithAI } from '../services/gemini.service';
 
 export const submitFeedback = async (req: AuthRequest, res: Response) => {
   const errors = validationResult(req);
@@ -84,4 +72,21 @@ export const updateFeedbackStatus = async (req: AuthRequest, res: Response) => {
     } catch (error: any) {
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
+};
+
+export const reAnalyzeFeedback = async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  try {
+    const feedback = await Feedback.findById(id);
+    if (!feedback) {
+      return res.status(404).json({ success: false, message: 'Feedback not found.' });
+    }
+    
+    feedback.ai_processed = false; // Reset to trigger re-analysis
+    const updatedFeedback = await processFeedbackWithAI(feedback);
+
+    res.json({ success: true, data: updatedFeedback });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
 };
