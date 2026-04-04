@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { submitFeedback, getAllFeedback, updateFeedbackStatus } from '../controllers/feedbackController';
+import { submitFeedback, getAllFeedback, updateFeedbackStatus, reAnalyzeFeedback } from '../controllers/feedbackController';
 import { authenticate, authorizeAdmin } from '../middleware/auth';
 import { feedbackLimiter } from '../middleware/rateLimiter';
 
@@ -16,5 +16,6 @@ router.post('/', feedbackLimiter, [
 // Protected admin routes
 router.get('/', authenticate, authorizeAdmin, getAllFeedback);
 router.patch('/:id', authenticate, authorizeAdmin, updateFeedbackStatus);
+router.post('/:id/re-analyze', authenticate, authorizeAdmin, reAnalyzeFeedback);
 
 export default router;
