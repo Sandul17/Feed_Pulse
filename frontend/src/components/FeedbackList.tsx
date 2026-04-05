@@ -62,8 +62,8 @@ export default function FeedbackList() {
                 <span className="px-2 py-1 text-xs bg-gray-200 rounded-full">
                   Priority: {item.ai_priority}
                 </span>
-                {item.ai_tags?.map(tag => (
-                    <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                {item.ai_tags?.map((tag, index) => (
+                  <span key={`${item._id}-${tag}-${index}`} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                         {tag}
                     </span>
                 ))}
