@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <BarChart3 className="mr-3 h-5 w-5" />
             Dashboard
           </a>
-          <a href="/feedback" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
+          <a href="/dashboard/all-feedback" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
             <MessageSquare className="mr-3 h-5 w-5" />
             All Feedback
           </a>
