@@ -1,12 +1,19 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { LogOut, BarChart3, MessageSquare } from 'lucide-react';
+import { BarChart3, LogOut, MessageSquare, ShieldCheck } from 'lucide-react';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
+
+  const navItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { href: '/dashboard/all-feedback', label: 'All Feedback', icon: MessageSquare },
+  ];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,34 +39,83 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-slate-600">Loading dashboard...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <aside className="fixed inset-y-0 left-0 w-64 bg-white shadow-md flex flex-col">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-indigo-600">FeedPulse</h2>
+    <div className="relative min-h-screen overflow-hidden bg-slate-100">
+      <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 rounded-full bg-cyan-200/40 blur-3xl" />
+
+      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur md:hidden">
+        <div className="flex items-center justify-between">
+          <span className="text-xl font-black text-indigo-600">FeedPulse</span>
+          <button onClick={handleLogout} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm font-medium text-slate-700">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
         </div>
-        <nav className="mt-6 flex-1">
-          <a href="/dashboard" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-            <BarChart3 className="mr-3 h-5 w-5" />
-            Dashboard
-          </a>
-          <a href="/dashboard/all-feedback" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-            <MessageSquare className="mr-3 h-5 w-5" />
-            All Feedback
-          </a>
+        <nav className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap transition ${
+                  isActive
+                    ? 'bg-indigo-600 text-white'
+                    : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
-        <div className="p-6">
-          <button onClick={handleLogout} className="flex items-center text-gray-700 hover:text-red-600">
-            <LogOut className="mr-3 h-5 w-5" />
+      </header>
+
+      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-slate-200/80 bg-white/90 p-6 shadow-xl shadow-slate-200/70 backdrop-blur md:flex md:flex-col">
+        <div>
+          <p className="inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cyan-700">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Admin Panel
+          </p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight text-indigo-600">FeedPulse</h2>
+        </div>
+
+        <nav className="mt-8 flex-1 space-y-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                    : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="pt-4">
+          <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700">
+            <LogOut className="h-5 w-5" />
             Logout
           </button>
         </div>
       </aside>
-      <main className="min-h-screen p-8 ml-64">
-        {children}
+
+      <main className="relative min-h-screen px-4 py-6 md:ml-72 md:p-10">
+        <div className="mx-auto w-full max-w-6xl">{children}</div>
       </main>
     </div>
   );
