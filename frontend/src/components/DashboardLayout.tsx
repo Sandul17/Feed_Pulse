@@ -36,12 +36,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <aside className="w-64 bg-white shadow-md">
+    <div className="min-h-screen bg-gray-100">
+      <aside className="fixed inset-y-0 left-0 w-64 bg-white shadow-md flex flex-col">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-indigo-600">FeedPulse</h2>
         </div>
-        <nav className="mt-6">
+        <nav className="mt-6 flex-1">
           <a href="/dashboard" className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
             <BarChart3 className="mr-3 h-5 w-5" />
             Dashboard
@@ -51,14 +51,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             All Feedback
           </a>
         </nav>
-        <div className="absolute bottom-0 w-64 p-6">
+        <div className="p-6">
           <button onClick={handleLogout} className="flex items-center text-gray-700 hover:text-red-600">
             <LogOut className="mr-3 h-5 w-5" />
             Logout
           </button>
         </div>
       </aside>
-      <main className="flex-1 p-8">
+      <main className="min-h-screen p-8 ml-64">
         {children}
       </main>
     </div>
